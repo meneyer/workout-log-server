@@ -21,32 +21,53 @@ router.post('/', validateSession, (req, res) => {
     .catch((err) => res.status(500).json({error: err}))
 });
 
-router.get('/',  function (req, res){
+// router.get('/',  function (req, res){
+//     // const query = {where: {owner: req.user.id}}
+//     Log.findAll()
+//     .then((logs) => res.status(200).json(logs))
+//     .catch((err) => res.status(500).json({ error: err }));
+// });
+
+
+//GET ALL LOGS FROM EVERYONE
+// router.get('/', function (req, res){
+//     // const query = {where: {owner: req.user.id}}
+//     Log.findAll()
+//     .then((logs) => res.status(200).json(logs))
+//     .catch((err) => res.status(500).json({ error: err }));
+// });
+
+//GET ALL LOGS FROM ONE SPECIFIC USER
+router.get('/', validateSession, function (req, res){
     // const query = {where: {owner: req.user.id}}
-    Log.findAll()
+    let userid = req.user.id
+    Log.findAll({
+        where: {owner: userid}
+    })
     .then((logs) => res.status(200).json(logs))
     .catch((err) => res.status(500).json({ error: err }));
 });
 
+//GET ONE LOG FROM ONE USER
 router.get('/:id', validateSession, function (req, res){
     let userid = req.user.id
     // const query = { where: {owner: userid} }
-    Log.findAll({
-        where: {owner: userid}
+    Log.findOne({
+        where: {id: req.params.id, owner: req.user.id}
     })
         .then((logs) => res.status(200).json(logs))
         .catch((err) => res.status(500).json({error: err}))
 });
 
-
-router.post('/:description', function(req, res){
-    let description = req.params.description;
-    Log.findAll({
-        where: { description: description}
-    })
-    .then(logs => res.status(200).json(logs))
-    .catch(err => res.status(500).json({error: err}))
-})
+//GET LOGS BY WORKOUT DESCRIPTION (the /:id above this must be commented out for this to work)
+// router.get('/:description', function(req, res){
+//     let description = req.params.description;
+//     Log.findAll({
+//         where: { description: description}
+//     })
+//     .then(logs => res.status(200).json(logs))
+//     .catch(err => res.status(500).json({error: err}))
+// })
 
 
 router.put('/update/:resultId', validateSession, function (req, res){
